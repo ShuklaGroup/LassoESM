@@ -22,10 +22,9 @@ ys = data.iloc[:,1].tolist()
 
 print("Optimization for Models trained on FusA")
 # List of models and their corresponding names and hyperparameters for grid search
-model_list = [KNeighborsClassifier, RandomForestClassifier, AdaBoostClassifier, SVC, MLPClassifier]
-model_names = ['KNN classif', 'RF', 'AdaBoost', 'SVC', 'MLP']
+model_list = [RandomForestClassifier, AdaBoostClassifier, SVC, MLPClassifier]
+model_names = ['RF', 'AdaBoost', 'SVC', 'MLP']
 parameters_list = [
-    {'classifier__n_neighbors': [5, 10, 25, 50], 'classifier__weights': ('uniform', 'distance')},
     {'classifier__n_estimators': [20, 50, 100, 200], 'classifier__max_depth': [10,20,50,100], 'classifier__max_features':('sqrt','log2')},
     {'classifier__n_estimators': [20, 50, 100, 200], 'classifier__learning_rate': [0.1, 1, 5, 10]},
     {'classifier__kernel':('linear', 'rbf', 'sigmoid','poly'), 'classifier__C':[0.1, 1, 10]},
@@ -40,7 +39,7 @@ for model, name, parameters in zip(model_list, model_names, parameters_list):
         ('classifier', model())
     ]
     pipeline = Pipeline(steps)
-    grid_search = GridSearchCV(pipeline, parameters,cv=10, scoring='balanced_accuracy')
+    grid_search = GridSearchCV(pipeline, parameters,n_jobs = -1, cv=10, scoring='balanced_accuracy')
     grid_search.fit(Xs, ys)
     # Collect and sort the results
     result_list.append(pd.DataFrame.from_dict(grid_search.cv_results_))
